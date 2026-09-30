@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel admin - Sapecc</title>
+<style>
+:root{--bg:#F4F6FB;--surface:#fff;--surface-2:#ECEFF7;--ink:#151A30;--muted:#5B6180;--line:#DCE0EC;--brand:#2D3FE0;--brand-soft:#E3E6FD;--ok:#0B8560;--ok-soft:#DCF3EA;--danger:#D6392F;--danger-soft:#FCE3E1;--accent:#F5B301;--warn-soft:#FFF1C7;--warn:#7A5600;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0D1124;--surface:#151A33;--surface-2:#1E2447;--ink:#E9ECF8;--muted:#9CA3C4;--line:#2A3158;--brand:#7F8CFF;--brand-soft:#252C62;--ok:#3CCB95;--ok-soft:#113A2D;--danger:#FF6F66;--danger-soft:#3E1B19;--warn-soft:#3A2E0B;--warn:#FFC83D;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.hd{max-width:1100px;margin:0 auto;padding:12px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hd strong{font-size:18px}
+nav{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;gap:22px;overflow-x:auto}
+nav a{padding:12px 2px;color:var(--muted);font-weight:700;text-decoration:none;border-bottom:2.5px solid transparent;white-space:nowrap}
+nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--brand)}
+main{max-width:1100px;margin:0 auto;padding:24px 20px 80px}
+h2{font-size:19px;margin:28px 0 12px}
+h2:first-child{margin-top:0}
+.muted{color:var(--muted)}.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px system-ui;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.danger{color:var(--danger)}
+.btn.sm{height:32px;padding:0 11px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:wait}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-size:22px;margin-top:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.reason{background:var(--danger-soft);padding:10px 12px;border-radius:10px;margin:10px 0}
+.events{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+input.in,textarea.in,select.in{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--bg);color:var(--ink);font:inherit}
+input.in,select.in{height:40px;padding:0 12px}
+textarea.in{resize:vertical;line-height:1.5}
+.in:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.actions input.in{flex:1;min-width:200px;height:38px}
+table{width:100%;border-collapse:collapse;background:var(--surface);font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12.5px;color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface-2)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.off{color:var(--muted)}
+.empty{padding:20px;border:1.5px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center}
+.login{max-width:380px;margin:40px auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:12px}
+.err{color:var(--danger);font-weight:600;margin:0}
+:focus-visible{outline:2.5px solid var(--brand);outline-offset:2px}
+/* logo */
+.logo{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:24px;flex:none;background:hsl(var(--h,220) 78% 91%);overflow:hidden}
+@media (prefers-color-scheme:dark){.logo{background:hsl(var(--h,220) 42% 24%)}}
+.logo img{width:82%;height:82%;object-fit:contain;border-radius:22%}
+.logo.lg{width:112px;height:112px;border-radius:24px;font-size:56px}
+/* daftar produk */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar .in{flex:1;min-width:200px}
+.toolbar select.in{flex:0 1 200px}
+.plist{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.prow{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.prow .grow{flex:1;min-width:0}
+.prow .nm{font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+/* editor */
+.editor{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field label{font-weight:700;font-size:14px}
+.hint{font-size:12.5px;color:var(--muted)}
+.logo-box{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.preview{position:sticky;top:120px}
+.preview h3{font-size:14px;margin:18px 0 8px;color:var(--muted)}
+.preview h3:first-of-type{margin-top:0}
+.pv-title{font-size:20px;font-weight:800;margin:10px 0 4px}
+.rich p{margin:0 0 .6em}.rich ul,.rich ol{margin:0 0 .8em;padding-left:20px}.rich li{margin:3px 0}
+.terms{border-left:4px solid var(--accent);background:var(--bg);border-radius:10px;padding:12px 14px}
+.savebar{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);margin:18px -20px -20px;padding:14px 20px;border-radius:0 0 16px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.check{display:flex;align-items:center;gap:8px;font-weight:600}
+.check input{width:17px;height:17px;accent-color:var(--brand)}
+/* logo aplikasi */
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:10px}
+.acard{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.acard .grow{flex:1;min-width:0}
+.acard .btns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;box-shadow:0 12px 28px -12px rgba(0,0,0,.5);z-index:50;max-width:calc(100vw - 32px)}
+@media (max-width:820px){.editor{grid-template-columns:minmax(0,1fr)}.preview{position:static}}
+@media (max-width:560px){main{padding:18px 14px 80px}.prow{flex-wrap:wrap}.prow .btn{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd"><strong>Sapecc, panel admin</strong><span id="who" class="muted small"></span></div>
+  <nav id="nav" hidden aria-label="Menu admin">
+    <a href="#ringkasan">Ringkasan</a><a href="#produk">Produk</a><a href="#aplikasi">Logo aplikasi</a>
+  </nav>
+</header>
+<main id="main"><p class="muted">Memuat...</p></main>
+<div id="toast" role="status" hidden></div>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+const date = ts => new Date(ts).toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' });
+const STATUS = { awaiting_payment:'Belum dibayar', held:'Ditahan', shipped:'Dikirim', completed:'Selesai', complained:'Komplain', refunded:'Refund', cancelled:'Batal' };
+const CAT_NAME = { digital:'Produk Digital', game:'Produk Game', jasa:'Jasa' };
+const TEMPLATES = {
+  game: '- Pastikan ID pemain dan server sudah benar sebelum bayar. Salah ID bukan tanggung jawab penjual.\n- Proses 1–5 menit setelah pembayaran diterima. Di jam sibuk bisa sampai 30 menit.\n- Item yang sudah masuk ke akun tidak bisa dibatalkan atau dikembalikan.\n- Ada kendala? Ajukan komplain dari halaman pesanan sebelum konfirmasi.',
+  digital: '- File dikirim lewat chat pesanan setelah pembayaran diterima.\n- Lisensi untuk pemakaian pribadi, kecuali disebutkan lisensi komersial.\n- Dilarang menjual ulang atau membagikan file.\n- File yang sudah dikirim tidak bisa dikembalikan, kecuali rusak atau tidak sesuai deskripsi.',
+  jasa: '- Kirim brief lengkap lewat chat setelah bayar.\n- Estimasi pengerjaan dihitung sejak brief lengkap diterima.\n- Revisi sesuai jumlah di deskripsi. Revisi tambahan dikenai biaya.\n- Dana diteruskan ke penjual setelah kamu setujui hasil akhirnya.'
+};
+let PRODUCTS = null, APPS = null, EDIT = null, filter = { q:'', st:'' };
+
+async function api(path, body, method){
+  const opts = body !== undefined ? { method: method || 'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) } : {};
+  const res = await fetch(path, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error || 'Terjadi kesalahan.'), { status: res.status });
+  return data;
+}
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3200); }
+
+// Sama dengan tampilan pelanggan: baris "- " jadi poin, "1. " jadi daftar bernomor.
+function richText(text){
+  let html = '', list = null;
+  const close = () => { if (list) { html += `</${list}>`; list = null; } };
+  for (const raw of String(text || '').split(/\r?\n/)) {
+    const l = raw.trim(); let m;
+    if ((m = l.match(/^[-•*]\s+(.*)/))) { if (list !== 'ul') { close(); html += '<ul>'; list = 'ul'; } html += `<li>${esc(m[1])}</li>`; }
+    else if ((m = l.match(/^\d+[.)]\s+(.*)/))) { if (list !== 'ol') { close(); html += '<ol>'; list = 'ol'; } html += `<li>${esc(m[1])}</li>`; }
+    else { close(); if (l) html += `<p>${esc(l)}</p>`; }
+  }
+  close();
+  return `<div class="rich">${html || '<p class="muted">(kosong)</p>'}</div>`;
+}
+function appImage(p){ if (!APPS) return null; const c = APPS.find(c => c.id === p.cat); const a = c && c.apps.find(a => a.id === p.sub); return a ? a.image : null; }
+function logoHTML(p, big){
+  const src = p.image || appImage(p);
+  return `<span class="logo${big ? ' lg' : ''}" style="--h:${p.hue ?? 220}" aria-hidden="true">${src ? `<img src="${esc(src)}" alt="">` : esc(p.icon || p.emoji || '📦')}</span>`;
+}
+
+// Gambar diperkecil di browser (maks 512 px) supaya ringan dan cepat dimuat pelanggan.
+function readImage(file, max = 512){
+  return new Promise((resolve, reject) => {
+    if (!/^image\/(png|jpeg|webp)$/.test(file.type)) return reject(new Error('Pakai gambar PNG, JPG, atau WebP.'));
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * s)); c.height = Math.max(1, Math.round(img.height * s));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      resolve(c.toDataURL(file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png', 0.9));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak bisa dibaca.')); };
+    img.src = url;
+  });
+}
+
+/* ---------- masuk ---------- */
+function loginView(msg){
+  $('#nav').hidden = true; $('#who').textContent = '';
+  $('#main').innerHTML = `<form class="login" id="lf"><strong style="font-size:18px">Masuk sebagai admin</strong>
+    ${msg ? `<p class="err">${esc(msg)}</p>` : ''}
+    <label>Email atau username<input class="in" name="email" autocomplete="username" required style="margin-top:6px"></label>
+    <label>Kata sandi<input class="in" name="password" type="password" autocomplete="current-password" required style="margin-top:6px"></label>
+    <button class="btn primary">Masuk</button><a href="/" class="muted small">Kembali ke Sapecc</a></form>`;
+  $('#lf').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      const r = await api('/api/auth/login', { email: e.target.email.value, password: e.target.password.value });
+      if (r.user.role !== 'admin') return loginView('Akun ini bukan admin.');
+      start();
+    } catch (err) { loginView(err.message); }
+  });
+}
+
+/* ---------- ringkasan ---------- */
+function complaintCard(o){
+  return `<div class="card"><div class="row"><div><b>${esc(o.code)}</b> <span class="muted small">${o.type === 'rekber' ? 'rekber langsung' : 'pesanan'}, ${date(o.createdAt)}</span><br>
+    ${esc(o.title)}<br><span class="small">Pembeli @${esc(o.buyer.username)}, penjual @${esc(o.seller.username)}</span></div>
+    <div style="text-align:right"><b>${rp(o.total)}</b><br><span class="muted small">penjual terima ${rp(o.payout)}</span></div></div>
+    <div class="reason"><b>Alasan komplain:</b> ${esc(o.complaint)}</div>
+    <ol class="events">${o.events.map(ev => `<li>${date(ev.at)}, ${esc(STATUS[ev.status] || ev.status)} oleh ${esc(ev.actor)}${ev.note ? `: ${esc(ev.note)}` : ''}</li>`).join('')}</ol>
+    <div class="actions"><input class="in" placeholder="Catatan keputusan (dilihat pembeli dan penjual)" data-note="${esc(o.code)}" maxlength="500">
+      <button class="btn" data-resolve="refund" data-code="${esc(o.code)}">Kembalikan ke pembeli</button>
+      <button class="btn primary" data-resolve="release" data-code="${esc(o.code)}">Teruskan ke penjual</button></div></div>`;
+}
+async function viewOverview(){
+  const d = await api('/api/admin/overview'); const s = d.stats;
+  $('#main').innerHTML = `<div class="stats">
+      <div class="stat"><span class="muted small">Dana ditahan rekber</span><b>${rp(s.held)}</b></div>
+      <div class="stat"><span class="muted small">Total saldo pengguna</span><b>${rp(s.balances)}</b></div>
+      <div class="stat"><span class="muted small">Komplain terbuka</span><b>${s.complaints}</b></div>
+      <div class="stat"><span class="muted small">Penarikan menunggu</span><b>${s.withdrawals}</b></div>
+      <div class="stat"><span class="muted small">Pengguna</span><b>${s.users}</b></div>
+      <div class="stat"><span class="muted small">Semua pesanan</span><b>${s.orders}</b></div></div>
+    <h2>Komplain</h2>${d.complaints.length ? d.complaints.map(complaintCard).join('') : '<div class="empty">Tidak ada komplain terbuka.</div>'}
+    <h2>Penarikan saldo</h2>${d.withdrawals.length ? d.withdrawals.map(w => `<div class="card"><div class="row"><div><b>${rp(w.amount)}</b> untuk @${esc(w.username)} (${esc(w.name)})<br>
+      <span class="small">${esc(w.bank)} ${esc(w.account_no)} a.n. ${esc(w.account_name)}</span><br><span class="muted small">${date(w.created_at)}</span></div>
+      <div class="actions" style="margin:0"><button class="btn danger" data-wd="reject" data-id="${w.id}">Tolak, kembalikan saldo</button><button class="btn primary" data-wd="paid" data-id="${w.id}">Sudah ditransfer</button></div></div></div>`).join('') : '<div class="empty">Tidak ada permintaan penarikan.</div>'}
+    <h2>Pesanan terbaru</h2><div class="tbl"><table><thead><tr><th>Kode</th><th>Waktu</th><th>Judul</th><th>Pembeli</th><th>Penjual</th><th>Total</th><th>Status</th></tr></thead><tbody>
+      ${d.recent.map(o => `<tr><td>${esc(o.code)}</td><td>${date(o.createdAt)}</td><td>${esc(o.title.slice(0, 40))}</td><td>@${esc(o.buyer.username)}</td><td>@${esc(o.seller.username)}</td><td>${rp(o.total)}</td><td><span class="pill">${STATUS[o.status] || o.status}</span></td></tr>`).join('') || '<tr><td colspan="7" class="muted">Belum ada pesanan.</td></tr>'}
+    </tbody></table></div>`;
+}
+
+/* ---------- produk ---------- */
+async function loadProducts(){
+  const [p, a] = await Promise.all([api('/api/admin/products'), api('/api/admin/apps')]);
+  PRODUCTS = p.products; APPS = a.categories;
+}
+function productRows(){
+  const q = filter.q.toLowerCase();
+  const list = PRODUCTS.filter(p => (!q || (p.name + ' ' + p.shop).toLowerCase().includes(q))
+    && (!filter.st || (filter.st === 'noterms' ? !p.terms.trim() : filter.st === 'nologo' ? !p.image && !appImage(p) : filter.st === 'hidden' ? !p.active : true)));
+  if (!list.length) return '<div class="empty">Tidak ada produk yang cocok.</div>';
+  return `<div class="plist">${list.map(p => `<div class="prow">${logoHTML(p)}<div class="grow"><span class="nm">${esc(p.name)}</span>
+      <span class="muted small">${esc(p.shop)}, ${rp(p.price)}</span>
+      <div class="tags">${!p.terms.trim() ? '<span class="pill warn">Belum ada S&amp;K</span>' : ''}${!p.image && !appImage(p) ? '<span class="pill warn">Belum ada logo</span>' : ''}${!p.active ? '<span class="pill off">Disembunyikan</span>' : ''}</div></div>
+      <button class="btn sm" data-edit="${p.id}">Atur produk</button></div>`).join('')}</div>`;
+}
+async function viewProducts(){
+  if (!PRODUCTS) await loadProducts();
+  const missingTerms = PRODUCTS.filter(p => !p.terms.trim()).length;
+  $('#main').innerHTML = `<h2>Produk</h2>
+    <p class="muted" style="margin-top:-4px">Atur logo, deskripsi, dan S&amp;K setiap produk. Perubahan langsung terlihat oleh pelanggan.${missingTerms ? ` <b>${missingTerms} produk</b> belum punya S&amp;K.` : ''}</p>
+    <div class="toolbar"><label class="sr" for="pq">Cari produk</label><input class="in" id="pq" type="search" placeholder="Cari nama produk atau toko" value="${esc(filter.q)}">
+      <label class="sr" for="pst">Saring</label><select class="in" id="pst">
+        ${[['', 'Semua produk'], ['noterms', 'Belum ada S&K'], ['nologo', 'Belum ada logo'], ['hidden', 'Disembunyikan']].map(([v, l]) => `<option value="${v}" ${filter.st === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <div id="plist">${productRows()}</div>`;
+  $('#pq').addEventListener('input', e => { filter.q = e.target.value; $('#plist').innerHTML = productRows(); });
+  $('#pst').addEventListener('change', e => { filter.st = e.target.value; $('#plist').innerHTML = productRows(); });
+}
+
+function viewEditor(id){
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) { location.hash = '#produk'; return; }
+  EDIT = { ...p };
+  const appImg = appImage(p);
+  $('#main').innerHTML = `<p><a href="#produk" class="btn sm">← Kembali ke daftar produk</a></p>
+    <div class="editor">
+      <form class="panel" id="ef" novalidate>
+        <div class="logo-box"><span id="logo-cur">${logoHTML(p, true)}</span><div>
+          <label class="btn" for="logo-file">Unggah logo produk</label><input class="sr" id="logo-file" type="file" accept="image/png,image/jpeg,image/webp">
+          ${p.image ? '<button type="button" class="btn danger" id="logo-del">Hapus logo</button>' : ''}
+          <p class="hint" style="margin:8px 0 0;max-width:36ch">PNG, JPG, atau WebP. Otomatis diperkecil. ${p.image ? '' : appImg ? 'Saat ini memakai logo aplikasi.' : 'Tanpa logo, yang tampil ikon emoji di bawah.'}</p></div></div>
+        <div class="field"><label for="e-name">Nama produk</label><input class="in" id="e-name" name="name" maxlength="100" value="${esc(p.name)}"></div>
+        <div class="field"><label for="e-icon">Ikon cadangan (emoji)</label><input class="in" id="e-icon" name="icon" maxlength="8" value="${esc(p.icon)}" style="max-width:120px"><span class="hint">Dipakai kalau produk dan aplikasinya belum punya logo.</span></div>
+        <div class="field"><label for="e-desc">Deskripsi</label><textarea class="in" id="e-desc" name="description" rows="7" maxlength="4000">${esc(p.description)}</textarea>
+          <span class="hint">Tulis apa yang didapat pembeli dan cara pengirimannya. Awali baris dengan tanda - untuk membuat poin.</span></div>
+        <div class="field"><label for="e-terms">Syarat &amp; ketentuan (S&amp;K)</label><textarea class="in" id="e-terms" name="terms" rows="7" maxlength="4000" placeholder="- Satu aturan per baris">${esc(p.terms)}</textarea>
+          <span class="hint">Pelanggan wajib mencentang "sudah membaca S&amp;K" sebelum bayar. <button type="button" class="btn sm" id="tpl" style="margin-top:6px">Isi contoh S&amp;K ${esc(CAT_NAME[p.cat] || '')}</button></span></div>
+        <label class="check"><input type="checkbox" name="active" ${p.active ? 'checked' : ''}> Tampilkan di katalog</label>
+        <p class="err" id="e-err" role="alert" hidden></p>
+        <div class="savebar"><button class="btn primary" id="e-save">Simpan perubahan</button><a class="btn" href="/#/p/${p.id}" target="_blank" rel="noopener">Lihat di situs</a><span class="muted small" id="e-state"></span></div>
+      </form>
+      <aside class="panel preview" aria-label="Pratinjau">
+        <h3>Pratinjau, seperti yang dilihat pelanggan</h3>
+        <div id="pv-logo">${logoHTML(p, true)}</div>
+        <div class="pv-title" id="pv-name">${esc(p.name)}</div>
+        <b>${rp(p.price)}</b> <span class="muted small">oleh ${esc(p.shop)}</span>
+        <h3>Deskripsi</h3><div id="pv-desc">${richText(p.description)}</div>
+        <h3>S&amp;K</h3><div class="terms" id="pv-terms">${richText(p.terms)}</div>
+      </aside>
+    </div>`;
+  const f = $('#ef'); let dirty = false;
+  const refresh = () => {
+    EDIT.name = f.name.value; EDIT.icon = f.icon.value;
+    $('#pv-name').textContent = f.name.value;
+    $('#pv-desc').innerHTML = richText(f.description.value);
+    $('#pv-terms').innerHTML = richText(f.terms.value);
+    $('#pv-logo').innerHTML = logoHTML(EDIT, true);
+    if (!EDIT.image) $('#logo-cur').innerHTML = logoHTML(EDIT, true);
+    dirty = true; $('#e-state').textContent = 'Belum disimpan';
+  };
+  f.addEventListener('input', refresh);
+  $('#tpl').addEventListener('click', () => {
+    if (f.terms.value.trim() && !confirm('Ganti S&K yang sudah ada dengan contoh?')) return;
+    f.terms.value = TEMPLATES[p.cat] || TEMPLATES.digital; refresh(); f.terms.focus();
+  });
+  $('#logo-file').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const data = await readImage(file);
+      const r = await api(`/api/admin/products/${p.id}/image`, { data });
+      p.image = r.image; toast('Logo produk diperbarui.');
+      const keep = { name: f.name.value, icon: f.icon.value, description: f.description.value, terms: f.terms.value, active: f.active.checked };
+      viewEditor(id); Object.entries(keep).forEach(([k, v]) => { if (k === 'active') $('#ef').active.checked = v; else $('#ef')[k].value = v; });
+      if (dirty) { $('#ef').dispatchEvent(new Event('input')); }
+    } catch (err) { toast(err.message); }
+    e.target.value = '';
+  });
+  const del = $('#logo-del');
+  if (del) del.addEventListener('click', async () => {
+    if (!confirm('Hapus logo produk ini?')) return;
+    try { await api(`/api/admin/products/${p.id}/image`, { remove: true }); p.image = null; toast('Logo dihapus.'); viewEditor(id); } catch (err) { toast(err.message); }
+  });
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('#e-save'); btn.disabled = true; $('#e-err').hidden = true;
+    const body = { name: f.name.value, icon: f.icon.value, description: f.description.value, terms: f.terms.value, active: f.active.checked };
+    try {
+      await api(`/api/admin/products/${p.id}`, body, 'PATCH');
+      Object.assign(p, body); dirty = false;
+      $('#e-state').textContent = 'Tersimpan'; toast('Perubahan disimpan. Pelanggan sudah bisa melihatnya.');
+    } catch (err) { const el = $('#e-err'); el.textContent = err.message; el.hidden = false; }
+    finally { btn.disabled = false; }
+  });
+  window.onbeforeunload = () => (dirty ? true : undefined);
+}
+
+/* ---------- logo aplikasi ---------- */
+async function viewApps(){
+  APPS = (await api('/api/admin/apps')).categories;
+  $('#main').innerHTML = `<h2>Logo aplikasi</h2>
+    <p class="muted" style="margin-top:-4px;max-width:70ch">Logo aplikasi tampil di menu kategori beranda, dan dipakai semua produk aplikasi itu yang belum punya logo sendiri. Contoh: unggah logo Mobile Legends sekali, semua produk diamond Mobile Legends ikut memakainya.</p>
+    ${APPS.map(c => `<h2 style="font-size:16px">${esc(c.name)}</h2><div class="agrid">${c.apps.map(a => `<div class="acard">${logoHTML({ image: a.image, icon: a.emoji, hue: 220 })}
+      <div class="grow"><b>${esc(a.name)}</b><br><span class="muted small">${a.products} produk</span>
+        <div class="btns"><label class="btn sm" for="af-${c.id}-${a.id}">${a.image ? 'Ganti logo' : 'Unggah logo'}</label><input class="sr" type="file" id="af-${c.id}-${a.id}" accept="image/png,image/jpeg,image/webp" data-app="${c.id}/${a.id}">
+        ${a.image ? `<button class="btn sm danger" data-appdel="${c.id}/${a.id}">Hapus</button>` : ''}</div></div></div>`).join('')}</div>`).join('')}`;
+}
+
+/* ---------- navigasi ---------- */
+async function route(){
+  window.onbeforeunload = null;
+  const h = location.hash.slice(1) || 'ringkasan';
+  const tab = h.startsWith('produk') ? 'produk' : h === 'aplikasi' ? 'aplikasi' : 'ringkasan';
+  document.querySelectorAll('#nav a').forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + tab ? 'page' : 'false'));
+  try {
+    if (h.startsWith('produk/')) { if (!PRODUCTS) await loadProducts(); viewEditor(h.slice(7)); }
+    else if (tab === 'produk') { PRODUCTS = null; await viewProducts(); }
+    else if (tab === 'aplikasi') await viewApps();
+    else await viewOverview();
+    window.scrollTo(0, 0);
+  } catch (e) {
+    if (e.status === 401 || e.status === 403) loginView(e.status === 403 ? 'Akun ini bukan admin.' : '');
+    else $('#main').innerHTML = `<p class="err">${esc(e.message)}</p>`;
+  }
+}
+async function start(){
+  let me;
+  try { me = (await api('/api/me')).user; } catch (e) { return loginView(e.message); }
+  if (!me || me.role !== 'admin') return loginView(me ? 'Akun ini bukan admin.' : '');
+  $('#nav').hidden = false;
+  $('#who').innerHTML = `${esc(me.name)} <button class="btn sm" id="out" style="margin-left:8px">Keluar</button>`;
+  $('#out').onclick = async () => { await api('/api/auth/logout', {}); loginView(); };
+  route();
+}
+window.addEventListener('hashchange', route);
+
+document.addEventListener('click', async e => {
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { location.hash = '#produk/' + ed.dataset.edit; return; }
+  const b = e.target.closest('[data-resolve],[data-wd],[data-appdel]');
+  if (!b) return;
+  if (b.dataset.appdel) {
+    if (!confirm('Hapus logo aplikasi ini?')) return;
+    const [c, s] = b.dataset.appdel.split('/');
+    try { await api(`/api/admin/apps/${c}/${s}/image`, { remove: true }); toast('Logo aplikasi dihapus.'); viewApps(); } catch (err) { toast(err.message); }
+    return;
+  }
+  const label = b.dataset.resolve === 'refund' ? 'mengembalikan dana ke pembeli' : b.dataset.resolve === 'release' ? 'meneruskan dana ke penjual' : b.dataset.wd === 'paid' ? 'menandai penarikan sudah ditransfer' : 'menolak penarikan dan mengembalikan saldo';
+  if (!confirm(`Yakin ${label}? Tindakan ini tidak bisa dibatalkan.`)) return;
+  b.disabled = true;
+  try {
+    if (b.dataset.resolve) {
+      const note = document.querySelector(`[data-note="${CSS.escape(b.dataset.code)}"]`).value;
+      await api(`/api/admin/orders/${encodeURIComponent(b.dataset.code)}/resolve`, { decision: b.dataset.resolve, note });
+    } else await api(`/api/admin/withdrawals/${b.dataset.id}`, { action: b.dataset.wd });
+    viewOverview();
+  } catch (err) { toast(err.message); b.disabled = false; }
+});
+document.addEventListener('change', async e => {
+  const inp = e.target.closest('input[data-app]');
+  if (!inp || !inp.files[0]) return;
+  const [c, s] = inp.dataset.app.split('/');
+  try {
+    const data = await readImage(inp.files[0]);
+    await api(`/api/admin/apps/${c}/${s}/image`, { data });
+    toast('Logo aplikasi diperbarui.'); viewApps();
+  } catch (err) { toast(err.message); }
+});
+start();
+})();
+</script>
+</body>
+</html>
